@@ -7,7 +7,7 @@ import Carousal from "../components/Carousal";
 export default function Home() {
   const [foodCat, setFoodCat] = useState([]);
   const [foodItem, setFoodItem] = useState([]);
-  const [search, setSearch] = useState(""); // Define search state
+  const [search, setSearch] = useState(""); // State for search functionality
 
   const loadData = async () => {
     try {
@@ -20,8 +20,8 @@ export default function Home() {
 
       if (response.ok) {
         const data = await response.json();
-        setFoodItem(data[0] || []); // Food items
-        setFoodCat(data[1] || []); // Food categories
+        setFoodItem(data[0] || []); // Array of food items
+        setFoodCat(data[1] || []); // Array of food categories
       } else {
         console.error("Error fetching data from API");
       }
@@ -59,11 +59,14 @@ export default function Home() {
                     )
                     .map((filteredItem) => (
                       <div key={filteredItem._id} className="col-md-4">
-                        <Card foodItem={filteredItem} options={filteredItem.options || {}} />
+                        <Card
+                          foodItem={filteredItem}
+                          options={filteredItem.options || {}}
+                        />
                       </div>
                     ))
                 ) : (
-                  <div>No items in this category</div>
+                  <div className="text-center">No items in this category</div>
                 )}
               </div>
             </div>

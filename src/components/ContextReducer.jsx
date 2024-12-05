@@ -1,4 +1,4 @@
-import React, { useReducer, useContext, createContext } from 'react';
+import React, { useReducer, useContext, createContext } from "react";
 
 const CartStateContext = createContext();
 const CartDispatchContext = createContext();
@@ -6,26 +6,53 @@ const CartDispatchContext = createContext();
 const reducer = (state, action) => {
     switch (action.type) {
         case "ADD":
-            return [...state, { id: action.id, name: action.name, qty: action.qty, size: action.size, price: action.price, img: action.img }]
+            // Check if item already exists with the same size
+            const existingItem = state.find(
+                (item) => item.id === action.id && item.size === action.size
+            );
+            if (existingItem) {
+                return state.map((item) =>
+                    item.id === action.id && item.size === action.size
+                        ? {
+                            ...item,
+                            qty: item.qty + action.qty,
+                            price: item.price + action.price,
+                        }
+                        : item
+                );
+            }
+            return [
+                ...state,
+                {
+                    id: action.id,
+                    name: action.name,
+                    qty: action.qty,
+                    size: action.size,
+                    price: action.price,
+                    img: action.img,
+                },
+            ];
+
         case "REMOVE":
-            let newArr = [...state]
-            newArr.splice(action.index, 1)
-            return newArr;
+            return state.filter((_, index) => index !== action.index);
+
         case "DROP":
-            let empArray = []
-            return empArray
+            return []; // Clear the cart
+
         case "UPDATE":
-            let arr = [...state]
-            arr.find((food, index) => {
-                if (food.id === action.id) {
-                    console.log(food.qty, parseInt(action.qty), action.price + food.price)
-                    arr[index] = { ...food, qty: parseInt(action.qty) + food.qty, price: action.price + food.price }
-                }
-                return arr
-            })
-            return arr
+            return state.map((item) =>
+                item.id === action.id && item.size === action.size
+                    ? {
+                        ...item,
+                        qty: item.qty + action.qty,
+                        price: item.price + action.price,
+                    }
+                    : item
+            );
+
         default:
-            console.log("Error in Reducer");
+            console.error("Error: Unknown action type in reducer.");
+            return state;
     }
 };
 
@@ -38,7 +65,7 @@ export const CartProvider = ({ children }) => {
                 {children}
             </CartStateContext.Provider>
         </CartDispatchContext.Provider>
-    )
+    );
 };
 
 export const useCart = () => useContext(CartStateContext);

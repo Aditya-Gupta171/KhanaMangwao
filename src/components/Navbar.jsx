@@ -1,9 +1,14 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import Badge from "react-bootstrap/Badge"; // Ensure you installed: npm install react-bootstrap
+import Modal from "../Modal";
+import Cart from "../screens/Cart";
 
 export default function Navbar() {
+  const [cartView, setCartView] = useState(false);
   const navigate = useNavigate();
-  const handlelogout = () => {
+
+  const handleLogout = () => {
     localStorage.removeItem("authToken");
     navigate("/login");
   };
@@ -29,26 +34,20 @@ export default function Navbar() {
           <div className="collapse navbar-collapse" id="navbarNav">
             <ul className="navbar-nav me-auto mb-2">
               <li className="nav-item">
-                <Link
-                  className="nav-link active fs-5"
-                  aria-current="page"
-                  to="/"
-                >
+                <Link className="nav-link active fs-5" aria-current="page" to="/">
                   Home
                 </Link>
               </li>
-              {localStorage.getItem("authToken") ? (
+              {localStorage.getItem("authToken") && (
                 <li className="nav-item">
                   <Link
                     className="nav-link active fs-5"
                     aria-current="page"
-                    to="/"
+                    to="/myorders"
                   >
                     My Orders
                   </Link>
                 </li>
-              ) : (
-                ""
               )}
             </ul>
             {!localStorage.getItem("authToken") ? (
@@ -56,22 +55,29 @@ export default function Navbar() {
                 <Link className="btn bg-white text-success mx-1" to="/login">
                   Login
                 </Link>
-                <Link
-                  className="btn bg-white text-success mx-1"
-                  to="/createuser"
-                >
+                <Link className="btn bg-white text-success mx-1" to="/createuser">
                   SignUp
                 </Link>
               </div>
             ) : (
               <div>
-                <div className="btn bg-white text-success mx-2">
+                <div
+                  className="btn bg-white text-success mx-2"
+                  onClick={() => setCartView(true)}
+                >
                   My Cart
-                  <Badge pillbg="danger">2</Badge>
-                  </div>
+                  <Badge pill bg="danger">
+                    1
+                  </Badge>
+                </div>
+                {cartView && (
+                  <Modal onClose={() => setCartView(false)}>
+                    <Cart />
+                  </Modal>
+                )}
                 <div
                   className="btn bg-white text-danger mx-2"
-                  onClick={handlelogout}
+                  onClick={handleLogout}
                 >
                   Logout
                 </div>
