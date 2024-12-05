@@ -1,0 +1,5 @@
+#carousel img {
+    object-fit: cover; /* Ensures images fill the space proportionally */
+    height: 400px; /* Adjust this value to make the carousel shorter or taller */
+  }
+  
